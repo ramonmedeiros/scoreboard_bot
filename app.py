@@ -69,7 +69,7 @@ def generate_leaderboard(channel):
         # check result
         if game['score1'] > game['score2']:
             board[player1]["win"] += 1
-            board[player1]["lost"] += 1
+            board[player2]["lost"] += 1
         elif game['score1'] == game['score2']:
             board[player1]["draw"] += 1
             board[player2]["draw"] += 1
