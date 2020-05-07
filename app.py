@@ -27,19 +27,54 @@ def post_result():
     myScore, otherScore, user = ret
 
     # get real names
-    teamA = app.config.slack.get_user_by_username(username)
-    teamB = app.config.slack.get_user_by_username(user)
+    teamA = app.config.slack.get_userId_by_username(username)
+    teamB = app.config.slack.get_userId_by_username(user)
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
     return jsonify(message="FOI")
-#    return jsonify(app.config.db.get_leaderboard(channel))
+    return jsonify(get_leaderboard(channel))
 
 @app.route("/leaderboard", methods=['POST'])
 def get_leaderboard():
     slack_response = request.form
     logging.info(slack_response)
     channel = slack_response["channel_id"]
-    return jsonify(app.config.db.get_leaderboard(channel))
+    result = jsonify(app.config.db.get_games_per_channel(channel))
+
+    # no result: return empty
+    if result is False:
+        return jsonify(message="No game")
+
+    # cache user list
+    userList = config.slack.get_user_list()
+
+    # generate table
+    board = {}
+    for game in result:
+        player1 = app.config.slack.get_name_by_username(game['playerName1'], userList)
+        player2 = app.config.slack.get_name_by_username(game['playerName2'], userList)
+
+        # not present: add
+        if player1 not in board: board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+        if player2 not in board: board[player2] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+
+        # check result
+        if game['score1'] > game['score2']:
+            board[player1]["win"] += 1
+            board[player1]["lost"] += 1
+        elif game['score1'] == game['score2']:
+            board[player1]["draw"] += 1
+            board[player2]["draw"] += 1
+        else:
+            board[player2]["win"] += 1
+            board[player1]["lost"] += 1
+
+        # sum goals
+        diff = game['score1'] - game['score2']
+        board[player1]["goals"] += diff
+        board[player2]["goals"] += (diff * -1)
+
+    return jsonify(board=board)
 
 def startApp():
     # set logging
