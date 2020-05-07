@@ -90,7 +90,8 @@ def generate_leaderboard(channel):
         l.insert(0, player)
         final.append(l)
 
-    final.sort(key=lambda x: x[0])
+    # sort by win DESC
+    final.sort(key=lambda x: x[1], reverse=True)
 
     # add header
     st = "```\n"
