@@ -146,10 +146,10 @@ def get_leaderboard():
     channel = slack_response["channel_id"]
     return jsonify(generate_leaderboard(channel))
 
-if __name__ == "__main__":
+def startApp():
     # load game if exists
     GAME = {}
     if os.path.exists(GAME_PATH):
         load_game()
-    app.run()
+    return app
 
