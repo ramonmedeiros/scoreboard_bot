@@ -127,6 +127,5 @@ def startApp():
     app.config.slack = WebClient(SLACK_BOT_TOKEN)
 
     app.config.db = Database()
-    logging.info(f"Os environ: {os.environ}")
     return app
 
