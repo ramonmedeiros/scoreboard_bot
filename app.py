@@ -26,19 +26,6 @@ def ack_response(url, text=""):
     logging.info(a.content)
 
 
-def get_user_by_displayname(name):
-    logging.info(f"Retriever user {name}")
-    try:
-        userlist = app.config.slack.users_list()
-    except Exception as e:
-        logging.error(e)
-        return
-
-    for member in userlist["members"]:
-        if member["profile"]["display_name"] in name:
-            logging.debug("User " + member["profile"]["real_name"])
-            return member["profile"]["real_name"]
-
 def get_user_by_username(username):
     try:
         userlist = app.config.slack.users_list()
@@ -47,7 +34,7 @@ def get_user_by_username(username):
         return
 
     for member in userlist["members"]:
-        if member["name"] in username:
+        if len(member["profile"]["display_name"]) > 0 and member["profile"]["display_name"] in name:
             return member["profile"]["real_name"]
 
 def generate_leaderboard(channel):
@@ -103,7 +90,7 @@ def post_result():
 
     # get real names
     teamA = get_user_by_username(username)
-    teamB = get_user_by_displayname(user)
+    teamB = get_user_by_username(user)
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
     return jsonify(message="FOI")
