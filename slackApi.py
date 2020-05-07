@@ -24,7 +24,7 @@ class Slack:
             if len(member["profile"]["display_name"]) == 0:
                 continue
 
-            if member["profile"]["display_name"] in username:
+            if member["name"] in username:
                 return member["id"]
 
     def get_name_by_id(self, userId, user_list=None):
