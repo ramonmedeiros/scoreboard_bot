@@ -41,14 +41,14 @@ def get_leaderboard():
     return jsonify(board=generate_leaderboard(channel))
 
 def generate_leaderboard(channel):
-    result = jsonify(app.config.db.get_games_per_channel(channel))
+    result = app.config.db.get_games_per_channel(channel)
 
     # no result: return empty
     if result is False:
         return jsonify(message="No game")
 
     # cache user list
-    userList = config.slack.get_user_list()
+    userList = app.config.slack.get_user_list()
 
     # generate table
     board = {}
