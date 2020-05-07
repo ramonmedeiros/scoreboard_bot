@@ -10,6 +10,14 @@ from database import Database
 
 app = Flask(__name__)
 
+# set up logging to file
+logging.basicConfig(
+     level=logging.INFO,
+     format= '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s',
+     datefmt='%H:%M:%S'
+)
+logging.getLogger(__name__)
+
 @app.before_request
 def log_request_info():
     logging.info('Headers: %s', request.headers)
@@ -24,6 +32,7 @@ def ack_response(url, text=""):
 
 
 def get_user_by_displayname(name):
+    logging.info(f"Retriever user {name}")
     try:
         userlist = app.config.slack.users_list()
     except Exception as e:
@@ -32,6 +41,7 @@ def get_user_by_displayname(name):
 
     for member in userlist["members"]:
         if member["profile"]["display_name"] == name:
+            logging.debug("User " + member["profile"]["real_name"])
             return member["profile"]["real_name"]
 
 def get_user_by_username(username):
