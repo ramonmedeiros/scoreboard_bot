@@ -146,8 +146,10 @@ def get_leaderboard():
     channel = slack_response["channel_id"]
     return jsonify(generate_leaderboard(channel))
 
-def startApp():
+def startApp(environ, resp):
     # load game if exists
+    logging.info(f"Os environ: {os.environ}")
+    logging.info(f"Arg env {environ}")
     GAME = {}
     if os.path.exists(GAME_PATH):
         load_game()
