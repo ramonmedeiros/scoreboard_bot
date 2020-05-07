@@ -1,38 +1,14 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from slack import WebClient
+
 import os
 import json
 import logging
 import requests
+
+from database import Database
+
 app = Flask(__name__)
-
-SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
-
-# Slack client for Web API requests
-
-# save game history
-GAME_PATH = "/home/ramonmedeiros/mysite/game.json"
-
-client = WebClient(SLACK_BOT_TOKEN)
-
-def save_game():
-    global GAME
-    global GAME_PATH
-
-    # delete if exists
-    if os.path.exists(GAME_PATH):
-        os.remove(GAME_PATH)
-
-    # save
-    with open(GAME_PATH, "w") as fd:
-        fd.write(json.dumps(GAME))
-
-def load_game():
-    global GAME
-    global GAME_PATH
-
-    with open(GAME_PATH) as fd:
-        return json.loads(fd.read())
 
 def ack_response(url, text=""):
     try:
@@ -65,23 +41,7 @@ def get_user_by_username(username):
         if member["name"] == username:
             return member["profile"]["real_name"]
 
-def newGame(channel, teamA, teamB, scoreA, scoreB):
-    # add game results
-    global GAME
-    if channel not in GAME:
-        GAME[channel] = []
-
-    GAME[channel].append({"teamA": teamA,
-                          "teamB": teamB,
-                          "scoreA": scoreA,
-                          "scoreB": scoreB})
-    save_game()
-
 def generate_leaderboard(channel):
-    global GAME
-    if channel not in GAME:
-        return ""
-
     result = {}
     for game in GAME[channel]:
         if game["teamA"] not in result:
@@ -136,7 +96,7 @@ def post_result():
     teamA = get_user_by_username(username)
     teamB = get_user_by_displayname(user)
 
-    newGame(channel, teamA, teamB, myScore, otherScore)
+    app.config.db.addGame(channel, teamA, myScore, teamB, otherScore)
     return jsonify(generate_leaderboard(channel))
 
 @app.route("/leaderboard", methods=['POST'])
@@ -147,10 +107,14 @@ def get_leaderboard():
     return jsonify(generate_leaderboard(channel))
 
 def startApp():
+    # Slack client for Web API requests
+    SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
+
+    # save game history
+    client = WebClient(SLACK_BOT_TOKEN)
+
     # load game if exists
+    app.config.db = Database()
     logging.info(f"Os environ: {os.environ}")
-    GAME = {}
-    if os.path.exists(GAME_PATH):
-        load_game()
     return app
 
