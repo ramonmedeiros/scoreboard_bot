@@ -31,7 +31,6 @@ def post_result():
     teamB = app.config.slack.get_userId_by_username(user)
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
-    return jsonify(message="FOI")
     return jsonify(get_leaderboard(channel))
 
 @app.route("/leaderboard", methods=['POST'])
