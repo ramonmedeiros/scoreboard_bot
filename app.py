@@ -34,7 +34,7 @@ def get_user_by_username(username):
         return
 
     for member in userlist["members"]:
-        if len(member["profile"]["display_name"]) > 0 and member["profile"]["display_name"] in name:
+        if len(member["profile"]["display_name"]) > 0 and member["profile"]["display_name"] in username:
             return member["profile"]["real_name"]
 
 def generate_leaderboard(channel):
