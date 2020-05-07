@@ -37,7 +37,7 @@ def get_user_by_displayname(name):
     logging.info(userlist["members"])
 
     for member in userlist["members"]:
-        if member["profile"]["display_name"] == name:
+        if member["profile"]["display_name"] in name:
             logging.debug("User " + member["profile"]["real_name"])
             return member["profile"]["real_name"]
 
@@ -50,7 +50,7 @@ def get_user_by_username(username):
 
     logging.info(userlist["members"])
     for member in userlist["members"]:
-        if member["name"] == username:
+        if member["name"] in username:
             return member["profile"]["real_name"]
 
 def generate_leaderboard(channel):
