@@ -34,8 +34,6 @@ def get_user_by_displayname(name):
         logging.error(e)
         return
 
-    logging.info(userlist["members"])
-
     for member in userlist["members"]:
         if member["profile"]["display_name"] in name:
             logging.debug("User " + member["profile"]["real_name"])
@@ -48,7 +46,6 @@ def get_user_by_username(username):
         logging.error(e)
         return
 
-    logging.info(userlist["members"])
     for member in userlist["members"]:
         if member["name"] in username:
             return member["profile"]["real_name"]
