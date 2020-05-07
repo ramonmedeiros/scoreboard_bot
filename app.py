@@ -12,12 +12,12 @@ app = Flask(__name__)
 @app.route("/result", methods=['POST'])
 def post_result():
     slack_response = request.form
-    logging.info(slack_response)
 
     # get string sent by user
     game_info = slack_response["text"]
     username = slack_response["user_name"]
     channel = slack_response["channel_id"]
+    channel_name = slack_response["channel_name"]
 
     ret = game_info.split()
     if len(ret) != 3:
@@ -31,14 +31,18 @@ def post_result():
     teamB = app.config.slack.get_userId_by_username(user)
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
-    return jsonify(text=generate_leaderboard(channel))
+    app.config.slack.client.chat_postMessage(
+        channel=channel_name,
+        text=generate_leaderboard(channel))
 
 @app.route("/leaderboard", methods=['POST'])
 def get_leaderboard():
     slack_response = request.form
-    logging.info(slack_response)
     channel = slack_response["channel_id"]
-    return jsonify(text=generate_leaderboard(channel))
+    channel_name = slack_response["channel_name"]
+    app.config.slack.client.chat_postMessage(
+        channel=channel_name,
+        text=generate_leaderboard(channel))
 
 def generate_leaderboard(channel):
     result = app.config.db.get_games_per_channel(channel)
