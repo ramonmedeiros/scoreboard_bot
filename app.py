@@ -9,12 +9,6 @@ import requests
 from database import Database
 
 app = Flask(__name__)
-# Slack client for Web API requests
-SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
-
-# save game history
-client = WebClient(SLACK_BOT_TOKEN)
-
 
 @app.before_request
 def log_request_info():
@@ -30,9 +24,8 @@ def ack_response(url, text=""):
 
 
 def get_user_by_displayname(name):
-    global client
     try:
-        userlist = client.users_list()
+        userlist = app.config.slack.users_list()
     except Exception as e:
         logging.error(e)
         return
@@ -43,7 +36,7 @@ def get_user_by_displayname(name):
 
 def get_user_by_username(username):
     try:
-        userlist = client.users_list()
+        userlist = app.config.slack.users_list()
     except Exception as e:
         logging.error(e)
         return
@@ -119,7 +112,10 @@ def get_leaderboard():
     return jsonify(generate_leaderboard(channel))
 
 def startApp():
-    # load game if exists
+    # Slack client for Web API requests
+    SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
+    app.config.slack = WebClient(SLACK_BOT_TOKEN)
+
     app.config.db = Database()
     logging.info(f"Os environ: {os.environ}")
     return app
