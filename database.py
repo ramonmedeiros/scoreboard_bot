@@ -62,5 +62,5 @@ class Database():
 
 
     def addGame(self, channel, player1, score1, player2, score2):
-        query = "INSERT INTO public.games(playerName1, playerName2, score1, score2) VALUES (%s, %s, %s, %s);"
-        return self.execute_query(query, (player1, player2, score1, score2))
+        query = "INSERT INTO public.games(playerName1, playerName2, score1, score2, channel) VALUES (%s, %s, %s, %s, %s);"
+        return self.execute_query(query, (player1, player2, score1, score2, channel))
