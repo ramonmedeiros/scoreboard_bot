@@ -31,13 +31,16 @@ def post_result():
     teamB = app.config.slack.get_userId_by_username(user)
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
-    return jsonify(get_leaderboard(channel))
+    return jsonify(generate_leaderboard(channel))
 
 @app.route("/leaderboard", methods=['POST'])
 def get_leaderboard():
     slack_response = request.form
     logging.info(slack_response)
     channel = slack_response["channel_id"]
+    return jsonify(board=generate_leaderboard(channel))
+
+def generate_leaderboard(channel):
     result = jsonify(app.config.db.get_games_per_channel(channel))
 
     # no result: return empty
@@ -73,7 +76,7 @@ def get_leaderboard():
         board[player1]["goals"] += diff
         board[player2]["goals"] += (diff * -1)
 
-    return jsonify(board=board)
+    return board
 
 def startApp():
     # set logging
