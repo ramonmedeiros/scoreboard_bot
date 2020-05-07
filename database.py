@@ -1,30 +1,29 @@
 import logging
 import os
 import psycopg2
-
+from urllib.parse import urlparse
 
 class Database():
 
     def __init__(self):
         # db auth
-        self.user = os.environ.get("DB_USER")
-        self.passwd = os.environ.get("DB_PASS")
-
-        # db config
-        self.host = os.environ.get("DB_HOST")
-        self.port = os.environ.get("DB_PORT")
-        self.dbName = os.environ.get("DB_NAME")
+        self.dbUrl = os.environ.get("DATABASE_URL")
         self.conn = self.get_connection()
 
     def get_connection(self):
-
+        result = urlparse(self.dbUrl)
+        username = result.username
+        password = result.password
+        database = result.path[1:]
+        hostname = result.hostname
+        port = result.port
         # connect
         try:
-            conn = psycopg2.connect(dbname=self.dbName,
-                                    user=self.user,
-                                    password=self.passwd,
-                                    host=self.host,
-                                    port=self.port)
+            conn = psycopg2.connect(dbname=database,
+                                    user=username,
+                                    password=password,
+                                    host=hostname,
+                                    port=port)
         except Exception as e:
             logging.error(f"Failed to login to database: {e}")
 
