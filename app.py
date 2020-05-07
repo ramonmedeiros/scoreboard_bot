@@ -102,13 +102,13 @@ def post_result():
         return jsonify({"text": "You need to send in the format"})
 
     # parse data and add to games
-    int(myScore), int(otherScore), user = ret
+    myScore, otherScore, user = ret
 
     # get real names
     teamA = get_user_by_username(username)
     teamB = get_user_by_displayname(user)
 
-    app.config.db.addGame(channel, teamA, myScore, teamB, otherScore)
+    app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
     return jsonify(message="FOI")
 #    return jsonify(generate_leaderboard(channel))
 
