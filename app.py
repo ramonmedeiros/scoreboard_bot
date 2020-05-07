@@ -34,6 +34,7 @@ def post_result():
     app.config.slack.client.chat_postMessage(
         channel=channel_name,
         text=generate_leaderboard(channel))
+    return ('', 204)
 
 @app.route("/leaderboard", methods=['POST'])
 def get_leaderboard():
@@ -43,6 +44,7 @@ def get_leaderboard():
     app.config.slack.client.chat_postMessage(
         channel=channel_name,
         text=generate_leaderboard(channel))
+    return ('', 204)
 
 def generate_leaderboard(channel):
     result = app.config.db.get_games_per_channel(channel)
