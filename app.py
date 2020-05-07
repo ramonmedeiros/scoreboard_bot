@@ -53,8 +53,8 @@ def generate_leaderboard(channel):
     # generate table
     board = {}
     for game in result:
-        player1 = app.config.slack.get_name_by_username(game['playerName1'], userList)
-        player2 = app.config.slack.get_name_by_username(game['playerName2'], userList)
+        player1 = app.config.slack.get_name_by_id(game['playerName1'], userList)
+        player2 = app.config.slack.get_name_by_id(game['playerName2'], userList)
 
         # not present: add
         if player1 not in board: board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
