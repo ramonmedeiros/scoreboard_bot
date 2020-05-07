@@ -18,11 +18,6 @@ logging.basicConfig(
 )
 logging.getLogger(__name__)
 
-@app.before_request
-def log_request_info():
-    logging.info('Headers: %s', request.headers)
-    logging.info('Body: %s', request.get_data())
-
 def ack_response(url, text=""):
     try:
         a = requests.post(url, data={"text":text})
@@ -107,7 +102,7 @@ def post_result():
         return jsonify({"text": "You need to send in the format"})
 
     # parse data and add to games
-    myScore, otherScore, user = ret
+    int(myScore), int(otherScore), user = ret
 
     # get real names
     teamA = get_user_by_username(username)
