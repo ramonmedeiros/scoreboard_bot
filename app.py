@@ -10,6 +10,11 @@ from database import Database
 
 app = Flask(__name__)
 
+@app.before_request
+def log_request_info():
+    logging.info('Headers: %s', request.headers)
+    logging.info('Body: %s', request.get_data())
+
 def ack_response(url, text=""):
     try:
         a = requests.post(url, data={"text":text})
