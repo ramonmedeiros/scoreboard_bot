@@ -14,8 +14,7 @@ class Slack:
 
         return WebClient(token)
 
-
-    def get_user_by_username(username):
+    def get_user_by_username(self, username):
         try:
             userlist = self.client.users_list()
         except Exception as e:
