@@ -1,5 +1,5 @@
 import pytest
-from unittest import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 import scoreboard
 
