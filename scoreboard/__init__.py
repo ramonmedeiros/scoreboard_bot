@@ -18,17 +18,20 @@ def post_result():
 
     ret = game_info.split()
     if len(ret) != 3:
-        return jsonify({"text": "You need to send in the format"})
+        return make_response(jsonify(message="You need to send in the format"), 400)
 
     # parse data and add to games
     myScore, otherScore, user = ret
 
     # get real names
-    teamA = app.config.slack.get_userId_by_username(username)
-    teamB = app.config.slack.get_userId_by_username(user)
+    teamA = current_app.config.slack.get_userId_by_username(username)
+    teamB = current_app.config.slack.get_userId_by_username(user)
 
-    app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
-    app.config.slack.client.chat_postMessage(
+    # error while saving: report
+    if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
+        return make_response(jsonify(message="Cannot register game"), 500)
+
+    current_app.config.slack.client.chat_postMessage(
         channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
 
@@ -37,26 +40,26 @@ def get_leaderboard():
     slack_response = request.form
     channel = slack_response["channel_id"]
     channel_name = slack_response["channel_name"]
-    app.config.slack.client.chat_postMessage(
+    current_app.config.slack.client.chat_postMessage(
         channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
 
 
 def generate_leaderboard(channel):
-    result = app.config.db.get_games_per_channel(channel)
+    result = current_app.config.db.get_games_per_channel(channel)
 
     # no result: return empty
     if result is False:
         return jsonify(message="No game")
 
     # cache user list
-    userList = app.config.slack.get_user_list()
+    userList = current_app.config.slack.get_user_list()
 
     # generate table
     board = {}
     for game in result:
-        player1 = app.config.slack.get_name_by_id(game['playerName1'],
-                                                  userList)
+        player1 = current_app.config.slack.get_name_by_id(game['playerName1'],
+                                                          userList)
         player2 = app.config.slack.get_name_by_id(game['playerName2'],
                                                   userList)
 
