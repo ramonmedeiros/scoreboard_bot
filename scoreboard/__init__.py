@@ -29,18 +29,18 @@ def post_result():
 
     app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
     app.config.slack.client.chat_postMessage(
-        channel=channel_name,
-        text=generate_leaderboard(channel))
+        channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
+
 
 def get_leaderboard():
     slack_response = request.form
     channel = slack_response["channel_id"]
     channel_name = slack_response["channel_name"]
     app.config.slack.client.chat_postMessage(
-        channel=channel_name,
-        text=generate_leaderboard(channel))
+        channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
+
 
 def generate_leaderboard(channel):
     result = app.config.db.get_games_per_channel(channel)
@@ -55,12 +55,16 @@ def generate_leaderboard(channel):
     # generate table
     board = {}
     for game in result:
-        player1 = app.config.slack.get_name_by_id(game['playerName1'], userList)
-        player2 = app.config.slack.get_name_by_id(game['playerName2'], userList)
+        player1 = app.config.slack.get_name_by_id(game['playerName1'],
+                                                  userList)
+        player2 = app.config.slack.get_name_by_id(game['playerName2'],
+                                                  userList)
 
         # not present: add
-        if player1 not in board: board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
-        if player2 not in board: board[player2] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+        if player1 not in board:
+            board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+        if player2 not in board:
+            board[player2] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
 
         # check result
         if game['score1'] > game['score2']:
@@ -92,13 +96,15 @@ def generate_leaderboard(channel):
     # add header
     st = "```\n"
     spaceName = 30
-    st += "Name" + (spaceName-4) * " " +  "Wins Draws Lost Goals\n"
+    st += "Name" + (spaceName - 4) * " " + "Wins Draws Lost Goals\n"
 
     for player in final:
         space = spaceName - len(player[0])
-        st += player[0] + space * " " + "  " +  "    ".join(map(str,player[1:])) + "\n"
+        st += player[0] + space * " " + "  " + "    ".join(map(
+            str, player[1:])) + "\n"
     st += "```\n"
     return st
+
 
 def startApp():
     # start app and set logging
@@ -108,10 +114,12 @@ def startApp():
 
     # add endpoints
     app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
-    app.add_url_rule('/leaderboard', 'get_leaderboard', get_leaderboard, methods=['POST'])
+    app.add_url_rule('/leaderboard',
+                     'get_leaderboard',
+                     get_leaderboard,
+                     methods=['POST'])
 
     # add db and slack client
     app.config.db = Database()
     app.config.slack = Slack()
     return app
-
