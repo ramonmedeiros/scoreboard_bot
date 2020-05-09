@@ -3,13 +3,10 @@ import requests
 
 from flask import Flask, current_app, jsonify, request, make_response
 
-from database import Database
-from slackApi import Slack
-
-app = Flask(__name__)
+from .database import Database
+from .slackApi import Slack
 
 
-@app.route("/result", methods=['POST'])
 def post_result():
     slack_response = request.form
 
@@ -36,7 +33,6 @@ def post_result():
         text=generate_leaderboard(channel))
     return ('', 204)
 
-@app.route("/leaderboard", methods=['POST'])
 def get_leaderboard():
     slack_response = request.form
     channel = slack_response["channel_id"]
@@ -105,11 +101,16 @@ def generate_leaderboard(channel):
     return st
 
 def startApp():
-    # set logging
+    # start app and set logging
+    app = Flask(__name__)
     logging.basicConfig(level=logging.INFO)
     logging.getLogger(__name__)
 
-    # Slack client for Web API requests
+    # add endpoints
+    app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
+    app.add_url_rule('/leaderboard', 'get_leaderboard', get_leaderboard, methods=['POST'])
+
+    # add db and slack client
     app.config.db = Database()
     app.config.slack = Slack()
     return app
