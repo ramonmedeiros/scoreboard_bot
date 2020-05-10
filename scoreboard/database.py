@@ -57,7 +57,7 @@ class Database():
 
     def get_games_per_channel(self, channel):
         query = "SELECT * FROM public.games WHERE channel=%s;"
-        return self.execute_query(query=query, params=(channel, ), select=True)
+        return self.execute_query(query=query, params=(channel,), select=True)
 
     def addGame(self, channel, player1, score1, player2, score2):
         query = 'INSERT INTO public.games("playerName1", "playerName2", score1, score2, channel) VALUES (%s, %s, %s, %s, %s);'
@@ -77,4 +77,4 @@ class Database():
     def get_token(self, appid):
         query = 'SELECT token from public.tokens WHERE appid=%s'
         return self.execute_query(query=query,
-                                  params=(appid))
+                                  params=(appid,))
