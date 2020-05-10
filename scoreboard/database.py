@@ -70,11 +70,11 @@ class Database():
                                       channel,
                                   ))
     def save_token(self, appid, token):
-        query = 'INSERT INTO public.tokens(appid, token) VALUES (?, ?);'
+        query = 'INSERT INTO public.tokens(appid, token) VALUES (%s, %s);'
         return self.execute_query(query=query,
                                   params=(appid, token))
 
     def get_token(self, appid):
-        query = 'SELECT token from public.tokens WHERE appid=?'
+        query = 'SELECT token from public.tokens WHERE appid=%s'
         return self.execute_query(query=query,
                                   params=(appid))
