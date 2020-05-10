@@ -38,7 +38,7 @@ class Database():
                 data = con.fetchall()
                 description = [desc[0] for desc in con.description]
         except Exception as e:
-            logging.error(f"Error while executing {query}: {e}")
+            logging.error(f"Error while executing {query % params}: {e}")
             return False
 
         # return results in a dict with columns

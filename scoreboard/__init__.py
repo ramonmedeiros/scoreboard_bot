@@ -31,6 +31,7 @@ def oauth():
 
 def post_result():
     slack_response = request.form
+    logging.info(request.form)
 
     # get string sent by user
     teamId = slack_response['team_id']
