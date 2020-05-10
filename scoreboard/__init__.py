@@ -42,14 +42,15 @@ def post_result():
     myScore, otherScore, user = ret
 
     # get real names
-    teamA = current_app.config.slack.get_userId_by_username(username)
-    teamB = current_app.config.slack.get_userId_by_username(user)
+    slack = Slack(token='')
+    teamA = slack.get_userId_by_username(username)
+    teamB = slack.get_userId_by_username(user)
 
     # error while saving: report
     if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
         return make_response(jsonify(message="Cannot register game"), 500)
 
-    current_app.config.slack.client.chat_postMessage(
+    slack.client.chat_postMessage(
         channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
 
@@ -59,7 +60,8 @@ def get_leaderboard():
     slack_response = request.form
     channel = slack_response["channel_id"]
     channel_name = slack_response["channel_name"]
-    current_app.config.slack.client.chat_postMessage(
+    slack = Slack(token='')
+    slack.client.chat_postMessage(
         channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
 
@@ -72,15 +74,14 @@ def generate_leaderboard(channel):
         return jsonify(message="No game")
 
     # cache user list
-    userList = current_app.config.slack.get_user_list()
+    slack = Slack(token='')
+    userList = slack.get_user_list()
 
     # generate table
     board = {}
     for game in result:
-        player1 = current_app.config.slack.get_name_by_id(game['playerName1'],
-                                                          userList)
-        player2 = app.config.slack.get_name_by_id(game['playerName2'],
-                                                  userList)
+        player1 = slack.get_name_by_id(game['playerName1'], userList)
+        player2 = slack.get_name_by_id(game['playerName2'], userList)
 
         # not present: add
         if player1 not in board:

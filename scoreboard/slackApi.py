@@ -8,15 +8,14 @@ class Slack:
     def __init__(self, token):
         self.client_id = os.environ.get("SLACK_CLIENT_ID")
         self.client_secret = os.environ.get("SLACK_CLIENT_SECRET")
-        self.token = token
+        self.client = self.connect(token)
 
-    def connect(self):
+    def connect(self, token):
         try:
-            self.client = WebClient(self.token)
+            return WebClient(token)
         except Exception as e:
             logging.error(f"Cannot connect to Slack: {e}")
             return False
-        return True
 
     def get_userId_by_username(self, username, user_list=None):
         # not passed: get it

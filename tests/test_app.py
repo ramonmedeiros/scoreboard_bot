@@ -6,13 +6,11 @@ import scoreboard
 
 @pytest.fixture
 @patch('scoreboard.database.psycopg2')
-@patch('scoreboard.slackApi.WebClient')
-@patch('scoreboard.slackApi.os.environ', {"SLACK_BOT_TOKEN": ""})
-def client(webclient, db):
+@patch('scoreboard.slackApi.os.environ', {"SLACK_CLIENT_ID": "", "SLACK_CLIENT_SECRET": ""})
+def client(db):
     app = scoreboard.startApp()
     app.config['TESTING'] = True
     app.config.dbMock = db
-    app.config.webclient = webclient
 
     return app.test_client()
 
@@ -20,7 +18,8 @@ def client(webclient, db):
 def test_app(client):
     assert client.get("/").status_code == 404
 
-def test_report_success(client):
+@patch('scoreboard.slackApi.WebClient')
+def test_report_success(webclient, client):
 
     # make sql works
     client.application.config.dbMock.connect().cursor().__enter__().rowcount = 1
@@ -35,7 +34,8 @@ def test_report_success(client):
     assert req.status_code == 204
     assert req.data == b""
 
-def test_report_text_wrong_format(client):
+@patch('scoreboard.slackApi.WebClient')
+def test_report_text_wrong_format(webclient, client):
 
     # make sql works
     client.application.config.dbMock.connect().cursor().__enter__().rowcount = 1
@@ -49,7 +49,8 @@ def test_report_text_wrong_format(client):
 
     assert req.status_code == 400
 
-def test_report_db_failed(client):
+@patch('scoreboard.slackApi.WebClient')
+def test_report_db_failed(webclient, client):
 
     # make sql works
     client.application.config.dbMock.connect().cursor().__enter__().execute.side_effect = Exception("BOOM")
