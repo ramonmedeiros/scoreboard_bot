@@ -15,7 +15,7 @@ def redirect():
 
     # authenticate on slack: return error if present
     response = slack.add_to_workspace(auth_code)
-    if code is False:
+    if response is False:
         return make_response(jsonify(message="Failed to authenticate"), 500)
 
     # save token
