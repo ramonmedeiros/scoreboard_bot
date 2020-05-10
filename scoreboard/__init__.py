@@ -61,7 +61,7 @@ def post_result():
         return make_response(jsonify(message="Cannot register game"), 500)
 
     slack.client.chat_postMessage(
-        channel=channel, text=generate_leaderboard(channel, token))
+        channel=channel, text=generate_leaderboard(channel, token[0]["token"]))
     return jsonify(message="success")
 
 
@@ -78,7 +78,7 @@ def get_leaderboard():
     slack = Slack(token=token[0]["token"])
 
     slack.client.chat_postMessage(
-        channel=channel, text=generate_leaderboard(channel, token))
+        channel=channel, text=generate_leaderboard(channel, token[0]["token"]))
     return jsonify(message="success")
 
 
