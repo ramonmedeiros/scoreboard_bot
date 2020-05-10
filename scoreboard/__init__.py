@@ -33,6 +33,7 @@ def post_result():
     slack_response = request.form
 
     # get string sent by user
+    teamId = slack_response['team_id']
     game_info = slack_response["text"]
     username = slack_response["user_name"]
     channel = slack_response["channel_id"]
@@ -44,8 +45,12 @@ def post_result():
     # parse data and add to games
     myScore, otherScore, user = ret
 
+    # set up slack
+    token = current_app.config.db.get_token(teamId)
+    slack = Slack(token=token)
+
+
     # get real names
-    slack = Slack(token='')
     teamA = slack.get_userId_by_username(username)
     teamB = slack.get_userId_by_username(user)
 
@@ -62,7 +67,12 @@ def get_leaderboard():
     logging.info(request.form)
     slack_response = request.form
     channel = slack_response["channel_id"]
-    slack = Slack(token='')
+    teamId = slack_response['team_id']
+
+    # set up slack
+    token = current_app.config.db.get_token(teamId)
+    slack = Slack(token=token)
+
     slack.client.chat_postMessage(
         channel=channel, text=generate_leaderboard(channel))
     return jsonify(message="success")

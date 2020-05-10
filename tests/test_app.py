@@ -35,7 +35,7 @@ def test_report_success(webclient, client):
                       data={"text": "1 1 @user",
                             "user_name": "@bla",
                             "channel_id": "AAA",
-                            "channel_name": "aa"})
+                            "team_id": "aa"})
 
     assert req.status_code == 200
     assert req.json["message"] == "success"
@@ -51,7 +51,7 @@ def test_report_text_wrong_format(webclient, client):
                       data={"text": "1 1 ",
                             "user_name": "@bla",
                             "channel_id": "AAA",
-                            "channel_name": "aa"})
+                            "team_id": "aa"})
 
     assert req.status_code == 400
 
@@ -66,7 +66,7 @@ def test_report_db_failed(webclient, client):
                       data={"text": "1 1 @user",
                             "user_name": "@bla",
                             "channel_id": "AAA",
-                            "channel_name": "aa"})
+                            "team_id": "aa"})
 
     assert req.status_code == 500
 
