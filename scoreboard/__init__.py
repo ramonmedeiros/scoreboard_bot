@@ -60,8 +60,9 @@ def post_result():
     if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
         return make_response(jsonify(message="Cannot register game"), 500)
 
-    slack.client.chat_postMessage(
-        channel=channel, text=generate_leaderboard(channel, token[0]["token"]))
+    msg = generate_leaderboard(channel, token[0]["token"])
+    logging.info(f"Sending message on channel {channel}: {msg}")
+    slack.client.chat_postMessage(channel=channel, text=msg)
     return jsonify(message="success")
 
 
@@ -77,8 +78,10 @@ def get_leaderboard():
         return make_response(jsonify(message="Not authenticated on Slack"), 400)
     slack = Slack(token=token[0]["token"])
 
-    slack.client.chat_postMessage(
-        channel=channel, text=generate_leaderboard(channel, token[0]["token"]))
+    msg = generate_leaderboard(channel, token[0]["token"])
+    logging.info(f"Sending message on channel {channel}: {msg}")
+    slack.client.chat_postMessage(channel=channel, text=msg)
+
     return jsonify(message="success")
 
 
