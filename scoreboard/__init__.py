@@ -63,7 +63,7 @@ def post_result():
     msg = generate_leaderboard(channel, token[0]["token"])
     logging.info(f"Sending message on channel {channel}: {msg}")
     slack.client.chat_postMessage(channel=channel, text=msg)
-    return jsonify(message="success")
+    return '', 204
 
 
 def get_leaderboard():
@@ -82,7 +82,7 @@ def get_leaderboard():
     logging.info(f"Sending message on channel {channel}: {msg}")
     slack.client.chat_postMessage(channel=channel, text=msg)
 
-    return jsonify(message="success")
+    return '', 204
 
 
 def generate_leaderboard(channel, token):
