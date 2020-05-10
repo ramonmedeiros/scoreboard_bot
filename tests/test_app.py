@@ -37,8 +37,8 @@ def test_report_success(webclient, client):
                             "channel_id": "AAA",
                             "channel_name": "aa"})
 
-    assert req.status_code == 204
-    assert req.data == b""
+    assert req.status_code == 200
+    assert req.json["message"] == "success"
 
 @patch('scoreboard.slackApi.WebClient')
 def test_report_text_wrong_format(webclient, client):

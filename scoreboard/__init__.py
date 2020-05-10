@@ -32,7 +32,6 @@ def post_result():
     game_info = slack_response["text"]
     username = slack_response["user_name"]
     channel = slack_response["channel_id"]
-    channel_name = slack_response["channel_name"]
 
     ret = game_info.split()
     if len(ret) != 3:
@@ -51,8 +50,8 @@ def post_result():
         return make_response(jsonify(message="Cannot register game"), 500)
 
     slack.client.chat_postMessage(
-        channel=channel_name, text=generate_leaderboard(channel))
-    return ('', 204)
+        channel=channel, text=generate_leaderboard(channel))
+    return jsonify(message="success")
 
 
 def get_leaderboard():
@@ -62,7 +61,7 @@ def get_leaderboard():
     slack = Slack(token='')
     slack.client.chat_postMessage(
         channel=channel, text=generate_leaderboard(channel))
-    return ('', 204)
+    return jsonify(message="success")
 
 
 def generate_leaderboard(channel):
