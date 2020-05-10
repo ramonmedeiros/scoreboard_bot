@@ -1,3 +1,6 @@
+![tests](https://github.com/ramonmedeiros/scoreboard_bot/workflows/CI/badge.svg)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=ramonmedeiros/scoreboard_bot&identifier=245428270)](https://dependabot.com)
+[![codecov](https://codecov.io/gh/ramonmedeiros/scoreboard_bot/branch/master/graph/badge.svg)](https://codecov.io/gh/ramonmedeiros/scoreboard_bot)
 # Scoreboard Slack bot
 
 Bot to log scores in office FIFA games

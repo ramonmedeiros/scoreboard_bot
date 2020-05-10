@@ -3,6 +3,7 @@ from slack import WebClient
 import logging
 import os
 
+
 class Slack:
     def __init__(self):
         self.client = self.connect()
@@ -37,12 +38,9 @@ class Slack:
             if member["id"] == userId:
                 return member["real_name"]
 
-
     def get_user_list(self):
         try:
             return self.client.users_list()
         except Exception as e:
             logging.error(f"Error while retrieving users: {e}")
             return False
-
-

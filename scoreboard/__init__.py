@@ -18,49 +18,56 @@ def post_result():
 
     ret = game_info.split()
     if len(ret) != 3:
-        return jsonify({"text": "You need to send in the format"})
+        return make_response(jsonify(message="You need to send in the format"), 400)
 
     # parse data and add to games
     myScore, otherScore, user = ret
 
     # get real names
-    teamA = app.config.slack.get_userId_by_username(username)
-    teamB = app.config.slack.get_userId_by_username(user)
+    teamA = current_app.config.slack.get_userId_by_username(username)
+    teamB = current_app.config.slack.get_userId_by_username(user)
 
-    app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore))
-    app.config.slack.client.chat_postMessage(
-        channel=channel_name,
-        text=generate_leaderboard(channel))
+    # error while saving: report
+    if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
+        return make_response(jsonify(message="Cannot register game"), 500)
+
+    current_app.config.slack.client.chat_postMessage(
+        channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
+
 
 def get_leaderboard():
     slack_response = request.form
     channel = slack_response["channel_id"]
     channel_name = slack_response["channel_name"]
-    app.config.slack.client.chat_postMessage(
-        channel=channel_name,
-        text=generate_leaderboard(channel))
+    current_app.config.slack.client.chat_postMessage(
+        channel=channel_name, text=generate_leaderboard(channel))
     return ('', 204)
 
+
 def generate_leaderboard(channel):
-    result = app.config.db.get_games_per_channel(channel)
+    result = current_app.config.db.get_games_per_channel(channel)
 
     # no result: return empty
     if result is False:
         return jsonify(message="No game")
 
     # cache user list
-    userList = app.config.slack.get_user_list()
+    userList = current_app.config.slack.get_user_list()
 
     # generate table
     board = {}
     for game in result:
-        player1 = app.config.slack.get_name_by_id(game['playerName1'], userList)
-        player2 = app.config.slack.get_name_by_id(game['playerName2'], userList)
+        player1 = current_app.config.slack.get_name_by_id(game['playerName1'],
+                                                          userList)
+        player2 = app.config.slack.get_name_by_id(game['playerName2'],
+                                                  userList)
 
         # not present: add
-        if player1 not in board: board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
-        if player2 not in board: board[player2] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+        if player1 not in board:
+            board[player1] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
+        if player2 not in board:
+            board[player2] = {"win": 0, "lost": 0, "draw": 0, "goals": 0}
 
         # check result
         if game['score1'] > game['score2']:
@@ -92,13 +99,15 @@ def generate_leaderboard(channel):
     # add header
     st = "```\n"
     spaceName = 30
-    st += "Name" + (spaceName-4) * " " +  "Wins Draws Lost Goals\n"
+    st += "Name" + (spaceName - 4) * " " + "Wins Draws Lost Goals\n"
 
     for player in final:
         space = spaceName - len(player[0])
-        st += player[0] + space * " " + "  " +  "    ".join(map(str,player[1:])) + "\n"
+        st += player[0] + space * " " + "  " + "    ".join(map(
+            str, player[1:])) + "\n"
     st += "```\n"
     return st
+
 
 def startApp():
     # start app and set logging
@@ -108,10 +117,12 @@ def startApp():
 
     # add endpoints
     app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
-    app.add_url_rule('/leaderboard', 'get_leaderboard', get_leaderboard, methods=['POST'])
+    app.add_url_rule('/leaderboard',
+                     'get_leaderboard',
+                     get_leaderboard,
+                     methods=['POST'])
 
     # add db and slack client
     app.config.db = Database()
     app.config.slack = Slack()
     return app
-
