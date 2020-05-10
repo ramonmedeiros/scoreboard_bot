@@ -19,8 +19,11 @@ def oauth():
         return make_response(jsonify(message="Failed to authenticate"), 500)
 
     # save token
+    teamId = response['team']['id']
+    token = response["access_token"]
     logging.info(response)
-    if current_app.config.db.save_token(response["team_id"], response["access_token"]) is False:
+
+    if current_app.config.db.save_token(teamId, token) is False:
         return make_response('', 500)
 
     # success
