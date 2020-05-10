@@ -79,4 +79,5 @@ class Database():
         logging.info(f"Searching for team {appid} token")
         query = 'SELECT token from public.tokens WHERE appid=%s'
         return self.execute_query(query=query,
-                                  params=(appid,))
+                                  params=(appid,),
+                                  select=True)

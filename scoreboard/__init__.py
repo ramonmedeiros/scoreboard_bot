@@ -50,7 +50,7 @@ def post_result():
     token = current_app.config.db.get_token(teamId)
     if token is False:
         return make_response(jsonify(message="Not authenticated on Slack"), 400)
-    slack = Slack(token=token)
+    slack = Slack(token=token[0]["token"])
 
     # get real names
     teamA = slack.get_userId_by_username(username)
@@ -75,7 +75,7 @@ def get_leaderboard():
     token = current_app.config.db.get_token(teamId)
     if token is False:
         return make_response(jsonify(message="Not authenticated on Slack"), 400)
-    slack = Slack(token=token)
+    slack = Slack(token=token[0]["token"])
 
     slack.client.chat_postMessage(
         channel=channel, text=generate_leaderboard(channel))
