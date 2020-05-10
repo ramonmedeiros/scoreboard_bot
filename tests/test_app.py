@@ -16,7 +16,7 @@ def client(db):
 
 
 def test_app(client):
-    assert client.get("/").status_code == 404
+    assert client.get("/").status_code == 302
 
 @patch('scoreboard.slackApi.WebClient')
 def test_report_success(webclient, client):

@@ -1,13 +1,13 @@
 import logging
 import requests
 
-from flask import Flask, current_app, jsonify, request, make_response
+from flask import Flask, current_app, jsonify, request, make_response, redirect
 
 from .database import Database
 from .slackApi import Slack
 
 
-def redirect():
+def oauth():
     auth_code = request.args['code']
 
     # An empty string is a valid token for this request
@@ -129,6 +129,10 @@ def generate_leaderboard(channel):
     return st
 
 
+
+def index():
+    return redirect("https://github.com/ramonmedeiros/scoreboard_bot/", code=302)
+
 def startApp():
     # start app and set logging
     app = Flask(__name__)
@@ -136,7 +140,8 @@ def startApp():
     logging.getLogger(__name__)
 
     # add endpoints
-    app.add_url_rule('/redirect', 'redirect', redirect, methods=['POST', 'GET'])
+    app.add_url_rule('/', 'index', index, methods=['GET'])
+    app.add_url_rule('/redirect', 'oauth', oauth, methods=['POST', 'GET'])
     app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
     app.add_url_rule('/leaderboard',
                      'get_leaderboard',
