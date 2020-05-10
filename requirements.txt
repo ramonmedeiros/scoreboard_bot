@@ -18,7 +18,7 @@ ipython==7.13.0
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.17.0
-Jinja2==2.11.1
+Jinja2==2.11.2
 MarkupSafe==1.1.1
 more-itertools==8.2.0
 multidict==4.7.5
@@ -41,8 +41,8 @@ requests==2.23.0
 six==1.14.0
 slackclient==2.5.0
 traitlets==4.3.3
+wcwidth==0.1.9
 urllib3==1.25.9
-wcwidth==0.1.8
 Werkzeug==1.0.0
 yarl==1.4.2
 zipp==3.1.0
