@@ -7,6 +7,11 @@ from .database import Database
 from .slackApi import Slack
 
 
+def redirect():
+    logging.info(request.data)
+    return ('', 204)
+
+
 def post_result():
     slack_response = request.form
 
@@ -116,6 +121,7 @@ def startApp():
     logging.getLogger(__name__)
 
     # add endpoints
+    app.add_url_rule('/redirect', 'redirect', redirect, methods=['POST', 'GET'])
     app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
     app.add_url_rule('/leaderboard',
                      'get_leaderboard',
