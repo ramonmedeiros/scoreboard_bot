@@ -8,9 +8,22 @@ from .slackApi import Slack
 
 
 def redirect():
-    logging.info(request.data)
-    return ('', 204)
+    auth_code = request.args['code']
 
+    # An empty string is a valid token for this request
+    slack = Slack(token='')
+
+    # authenticate on slack: return error if present
+    response = slack.add_to_workspace(auth_code)
+    if code is False:
+        return make_response(jsonify(message="Failed to authenticate"), 500)
+
+    # save token
+    if current_app.config.db.save_token(response["app_id"], response["access_token"]) is False:
+        return make_response('', 500)
+
+    # success
+    return ('', 204)
 
 def post_result():
     slack_response = request.form
@@ -42,6 +55,7 @@ def post_result():
 
 
 def get_leaderboard():
+    logging.info(request.form)
     slack_response = request.form
     channel = slack_response["channel_id"]
     channel_name = slack_response["channel_name"]
@@ -130,5 +144,4 @@ def startApp():
 
     # add db and slack client
     app.config.db = Database()
-    app.config.slack = Slack()
     return app
