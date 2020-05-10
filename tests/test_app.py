@@ -68,6 +68,6 @@ def test_report_db_failed(webclient, client):
                             "channel_id": "AAA",
                             "team_id": "aa"})
 
-    assert req.status_code == 500
+    assert req.status_code == 400
 
 
