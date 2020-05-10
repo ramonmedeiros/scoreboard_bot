@@ -59,10 +59,9 @@ def get_leaderboard():
     logging.info(request.form)
     slack_response = request.form
     channel = slack_response["channel_id"]
-    channel_name = slack_response["channel_name"]
     slack = Slack(token='')
     slack.client.chat_postMessage(
-        channel=channel_name, text=generate_leaderboard(channel))
+        channel=channel, text=generate_leaderboard(channel))
     return ('', 204)
 
 
