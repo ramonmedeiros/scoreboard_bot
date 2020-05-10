@@ -133,6 +133,9 @@ def generate_leaderboard(channel):
 def index():
     return redirect("https://github.com/ramonmedeiros/scoreboard_bot/", code=302)
 
+def install():
+    return redirect("https://slack.com/oauth/v2/authorize?client_id=4022839166.989674812551&scope=commands,users:read,chat:write", code=302)
+
 def startApp():
     # start app and set logging
     app = Flask(__name__)
@@ -141,6 +144,7 @@ def startApp():
 
     # add endpoints
     app.add_url_rule('/', 'index', index, methods=['GET'])
+    app.add_url_rule('/install', 'install', install, methods=['GET'])
     app.add_url_rule('/redirect', 'oauth', oauth, methods=['POST', 'GET'])
     app.add_url_rule('/result', 'post_result', post_result, methods=['POST'])
     app.add_url_rule('/leaderboard',

@@ -18,6 +18,12 @@ def client(db):
 def test_app(client):
     assert client.get("/").status_code == 302
 
+def test_install(client):
+    assert client.get("/install").status_code == 302
+
+
+
+
 @patch('scoreboard.slackApi.WebClient')
 def test_report_success(webclient, client):
 
