@@ -1,7 +1,8 @@
 ![tests](https://github.com/ramonmedeiros/scoreboard_bot/workflows/CI/badge.svg)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=ramonmedeiros/scoreboard_bot&identifier=245428270)](https://dependabot.com)
 [![codecov](https://codecov.io/gh/ramonmedeiros/scoreboard_bot/branch/master/graph/badge.svg)](https://codecov.io/gh/ramonmedeiros/scoreboard_bot)
-# Scoreboard Slack bot
+
+# Scoreboard Slack bot <a href="https://slack.com/oauth/v2/authorize?client_id=4022839166.989674812551&scope=commands,users:read,chat:write"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
 
 Bot to log scores in office FIFA games
 
@@ -10,13 +11,3 @@ Bot to log scores in office FIFA games
 1. Python & Flask
 2. Postgresql
 3. Heroku
-
-## Fork and have your own. To reuse this:
-
-1. Create a Heroku app https://devcenter.heroku.com/articles/getting-started-with-python
-2. Create a postgresql on Heroku https://www.heroku.com/postgres
-3. Create a App on Slack https://api.slack.com/start
-4. Set the bot to write messages on the channel
-5. Set SLACK_BOT_TOKEN on Heroku as environment variable with Slack Token  https://slack.com/intl/en-ee/help/articles/215770388-Create-and-regenerate-API-tokens
-6. Map slash commands do endpoints /leaderboard and /report
-(Guess that was)
