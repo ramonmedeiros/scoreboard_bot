@@ -12,10 +12,13 @@ class Slack:
 
     def connect(self, token):
         try:
-            return WebClient(token)
+            client = WebClient(token)
+            logging.info(f"Connected with token {token[:6]}**{token[-6:]}")
         except Exception as e:
             logging.error(f"Cannot connect to Slack: {e}")
             return False
+
+        return client
 
     def get_userId_by_username(self, username, user_list=None):
         # not passed: get it
