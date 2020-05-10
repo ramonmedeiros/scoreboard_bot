@@ -70,11 +70,13 @@ class Database():
                                       channel,
                                   ))
     def save_token(self, appid, token):
+        logging.info(f"Storing for team {appid} token")
         query = 'INSERT INTO public.tokens(appid, token) VALUES (%(id)s, %(t)s) ON CONFLICT (appid) DO UPDATE SET token = %(t)s'
         return self.execute_query(query=query,
                                   params={"id": appid, "t": token})
 
     def get_token(self, appid):
+        logging.info(f"Searching for team {appid} token")
         query = 'SELECT token from public.tokens WHERE appid=%s'
         return self.execute_query(query=query,
                                   params=(appid,))
