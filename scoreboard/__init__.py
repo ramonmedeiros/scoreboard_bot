@@ -23,7 +23,7 @@ def oauth():
         return make_response('', 500)
 
     # success
-    return ('', 204)
+    return ('All set!', 200)
 
 def post_result():
     slack_response = request.form
