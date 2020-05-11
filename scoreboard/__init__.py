@@ -160,14 +160,15 @@ def generate_leaderboard(channel, token):
 
 def verify_request():
     request_body = urllib.parse.urlencode(dict(request.form))
-    timestamp = datetime.fromtimestamp(int(request.headers['X-Slack-Request-Timestamp']))
+    ts = request.headers['X-Slack-Request-Timestamp']
+    timestamp = datetime.fromtimestamp(int(ts))
 
     # more than 5 minutes: may be a attack
     if (datetime.now() - timestamp) == timedelta(minutes=5):
         logging.error("Request timestamp verification failed")
         return False
 
-    sig_basestring = 'v0:' + timestamp + ':' + request_body
+    sig_basestring = 'v0:' + ts + ':' + request_body
     my_signature = 'v0=' + hashlib.sha256(app.config.signing, sig_basestring).hexdigest()
 
     slack_signature = request.headers['X-Slack-Signature']
