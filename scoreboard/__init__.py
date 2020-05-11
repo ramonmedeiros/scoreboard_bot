@@ -163,7 +163,7 @@ def verify_request():
     # more than 5 minutes: may be a attack
     if abs(time.time() - timestamp) > 60 * 5:
         logging.error("Request timestamp verification failed")
-       return False
+        return False
 
     sig_basestring = 'v0:' + timestamp + ':' + request_body
     my_signature = 'v0=' + hmac.compute_hash_sha256(
