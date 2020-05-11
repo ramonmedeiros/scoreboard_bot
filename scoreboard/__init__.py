@@ -64,6 +64,10 @@ def post_result():
     teamA = slack.get_userId_by_username(username)
     teamB = slack.get_userId_by_username(user)
 
+    # user not present: send message
+    if teamB is None:
+        return f"User {user} is not on the channel"
+
     # error while saving: report
     if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
         return make_response(jsonify(message="Cannot register game"), 500)
