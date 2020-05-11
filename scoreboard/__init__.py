@@ -1,5 +1,6 @@
 import logging
 import hashlib
+import hmac
 import os
 import urllib
 import time
@@ -169,7 +170,7 @@ def verify_request():
         return False
 
     sig_basestring = 'v0:' + ts + ':' + request_body
-    my_signature = 'v0=' + hashlib.sha256(current_app.config.signing, sig_basestring).hexdigest()
+    my_signature = 'v0=' + hmac.new(current_app.config.signing, sig_basestring, hashlib.sha256).hexdigest()
 
     slack_signature = request.headers['X-Slack-Signature']
 
