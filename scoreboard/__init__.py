@@ -1,9 +1,10 @@
 import logging
-import requests
+import hashlib
 import os
 import urllib
 import time
 
+from datetime import datetime, timedelta
 from flask import Flask, current_app, jsonify, request, make_response, redirect
 
 from .database import Database
@@ -159,18 +160,15 @@ def generate_leaderboard(channel, token):
 
 def verify_request():
     request_body = urllib.parse.urlencode(dict(request.form))
-    timestamp = request.headers['X-Slack-Request-Timestamp']
+    timestamp = datetime.fromtimestamp(int(request.headers['X-Slack-Request-Timestamp']))
 
     # more than 5 minutes: may be a attack
-    if abs(time.time() - timestamp) > 60 * 5:
+    if (datetime.now() - timestamp) == timedelta(minutes=5):
         logging.error("Request timestamp verification failed")
         return False
 
     sig_basestring = 'v0:' + timestamp + ':' + request_body
-    my_signature = 'v0=' + hmac.compute_hash_sha256(
-        app.config.signing,
-        sig_basestring
-        ).hexdigest()
+    my_signature = 'v0=' + hashlib.sha256(app.config.signing, sig_basestring).hexdigest()
 
     slack_signature = request.headers['X-Slack-Signature']
 
