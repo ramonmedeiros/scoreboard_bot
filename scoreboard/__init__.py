@@ -170,7 +170,9 @@ def verify_request():
         return False
 
     sig_basestring = 'v0:' + ts + ':' + request_body
-    my_signature = 'v0=' + hmac.new(current_app.config.signing.encode(), sig_basestring, hashlib.sha256).hexdigest()
+    my_signature = 'v0=' + hmac.new(current_app.config.signing.encode(),
+                                    sig_basestring.encode(),
+                                    hashlib.sha256).hexdigest()
 
     slack_signature = request.headers['X-Slack-Signature']
 
