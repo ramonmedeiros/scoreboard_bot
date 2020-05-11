@@ -140,6 +140,7 @@ def generate_leaderboard(channel, token):
         board[player2]["goals"] += (diff * -1)
 
     # order by wins and return
+    logging.info(board)
     final = []
     for player in board:
         p = board[player]
