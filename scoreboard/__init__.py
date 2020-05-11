@@ -181,7 +181,7 @@ def verify_request():
     slack_signature = str(request.headers.get('X-Slack-Signature', ''))
 
     if hmac.compare_digest(my_signature, slack_signature):
-        logging.error("Request verified successful")
+        logging.info("Request verified successful")
         return True
 
     logging.error("Request signature verification failed")

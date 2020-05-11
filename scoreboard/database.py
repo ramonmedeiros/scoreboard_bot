@@ -1,6 +1,7 @@
 import logging
 import os
 import psycopg2
+import sys
 
 from urllib.parse import urlparse
 
@@ -22,6 +23,7 @@ class Database():
                                     port=result.port)
         except Exception as e:
             logging.error(f"Failed to login to database: {e}")
+            sys.exit(1)
 
     def execute_query(self, query, params, select=False):
         try:
