@@ -6,6 +6,7 @@ import scoreboard
 
 @pytest.fixture
 @patch('scoreboard.database.psycopg2')
+@patch('scoreboard.verify_request', True)
 @patch('scoreboard.slackApi.os.environ', {"SLACK_CLIENT_ID": "", "SLACK_CLIENT_SECRET": ""})
 def client(db):
     app = scoreboard.startApp()
@@ -20,8 +21,6 @@ def test_app(client):
 
 def test_install(client):
     assert client.get("/install").status_code == 302
-
-
 
 
 #@patch('scoreboard.slackApi.WebClient')
@@ -43,7 +42,9 @@ def test_install(client):
 #    assert req.json["message"] == "success"
 
 @patch('scoreboard.slackApi.WebClient')
-def test_report_text_wrong_format(webclient, client):
+@patch('scoreboard.verify_request')
+def test_report_text_wrong_format(verify, webclient, client):
+    verify.return_value = True
 
     # make sql works
     client.application.config.dbMock.connect().cursor().__enter__().rowcount = 1
@@ -58,7 +59,9 @@ def test_report_text_wrong_format(webclient, client):
     assert req.status_code == 400
 
 @patch('scoreboard.slackApi.WebClient')
-def test_report_db_failed(webclient, client):
+@patch('scoreboard.verify_request')
+def test_report_db_failed(verify, webclient, client):
+    verify.return_value = True
 
     # make sql works
     client.application.config.dbMock.connect().cursor().__enter__().execute.side_effect = Exception("BOOM")
