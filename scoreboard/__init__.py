@@ -66,7 +66,7 @@ def post_result():
         return make_response(jsonify(message="Cannot register game"), 500)
 
     msg = generate_leaderboard(channel, token[0]["token"])
-    logging.info(f"Sending message on channel {channel}: {msg}")
+    logging.info(f"Sending message on channel {channel}")
     slack.client.chat_postMessage(channel=channel, text=msg)
     return '', 204
 
@@ -87,7 +87,7 @@ def get_leaderboard():
     slack = Slack(token=token[0]["token"])
 
     msg = generate_leaderboard(channel, token[0]["token"])
-    logging.info(f"Sending message on channel {channel}: {msg}")
+    logging.info(f"Sending message on channel {channel}")
     slack.client.chat_postMessage(channel=channel, text=msg)
 
     return '', 204
@@ -174,6 +174,7 @@ def verify_request():
     slack_signature = request.headers['X-Slack-Signature']
 
     if hmac.compare(my_signature, slack_signature):
+        logging.error("Request verified successful")
         return True
 
     logging.error("Request signature verification failed")
