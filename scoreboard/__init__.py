@@ -66,7 +66,7 @@ def post_result():
 
     # user not present: send message
     if teamB is None:
-        return f"User {user} is not on the channel", 400
+        return f"User {user} is not on the channel"
 
     # error while saving: report
     if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
