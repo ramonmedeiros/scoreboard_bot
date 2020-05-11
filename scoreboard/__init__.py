@@ -1,6 +1,7 @@
 import logging
 import requests
 import os
+import urllib
 import time
 
 from flask import Flask, current_app, jsonify, request, make_response, redirect
@@ -157,7 +158,7 @@ def generate_leaderboard(channel, token):
 
 
 def verify_request():
-    request_body = request.body()
+    request_body = urllib.parse.urlencode(dict(request.form))
     timestamp = request.headers['X-Slack-Request-Timestamp']
 
     # more than 5 minutes: may be a attack
