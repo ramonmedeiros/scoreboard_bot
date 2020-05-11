@@ -1,5 +1,7 @@
 import logging
 import requests
+import os
+import time
 
 from flask import Flask, current_app, jsonify, request, make_response, redirect
 
@@ -30,6 +32,9 @@ def oauth():
     return ('All set!', 200)
 
 def post_result():
+    if verify_request() is False:
+        return '', 401
+
     slack_response = request.form
     logging.info(request.form)
 
@@ -67,6 +72,9 @@ def post_result():
 
 
 def get_leaderboard():
+    if verify_request() is False:
+        return '', 401
+
     logging.info(request.form)
     slack_response = request.form
     channel = slack_response["channel_id"]
@@ -148,6 +156,28 @@ def generate_leaderboard(channel, token):
     return st
 
 
+def verify_request():
+    request_body = request.body()
+    timestamp = request.headers['X-Slack-Request-Timestamp']
+
+    # more than 5 minutes: may be a attack
+    if abs(time.time() - timestamp) > 60 * 5:
+        logging.error("Request timestamp verification failed")
+       return False
+
+    sig_basestring = 'v0:' + timestamp + ':' + request_body
+    my_signature = 'v0=' + hmac.compute_hash_sha256(
+        app.config.signing,
+        sig_basestring
+        ).hexdigest()
+
+    slack_signature = request.headers['X-Slack-Signature']
+
+    if hmac.compare(my_signature, slack_signature):
+        return True
+
+    logging.error("Request signature verification failed")
+    return False
 
 def index():
     return redirect("https://github.com/ramonmedeiros/scoreboard_bot/", code=302)
@@ -173,4 +203,5 @@ def startApp():
 
     # add db and slack client
     app.config.db = Database()
+    app.config.signing = os.environ.get("SLACK_SIGNING")
     return app
