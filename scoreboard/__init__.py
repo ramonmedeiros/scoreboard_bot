@@ -165,11 +165,11 @@ def generate_leaderboard(channel, token):
 
 def verify_request():
     request_body = urllib.parse.urlencode(dict(request.form))
-    ts = request.headers['X-Slack-Request-Timestamp']
-    timestamp = datetime.fromtimestamp(int(ts))
+    ts = request.headers.get('X-Slack-Request-Timestamp', '0')
+    timestamp = datetime.fromtimestamp(float(ts))
 
     # more than 5 minutes: may be a attack
-    if (datetime.now() - timestamp) == timedelta(minutes=5):
+    if (datetime.now() - timestamp) > timedelta(minutes=5):
         logging.error("Request timestamp verification failed")
         return False
 
@@ -178,7 +178,7 @@ def verify_request():
                                     sig_basestring.encode(),
                                     hashlib.sha256).hexdigest()
 
-    slack_signature = request.headers['X-Slack-Signature']
+    slack_signature = str(request.headers.get('X-Slack-Signature', ''))
 
     if hmac.compare_digest(my_signature, slack_signature):
         logging.error("Request verified successful")
@@ -211,5 +211,5 @@ def startApp():
 
     # add db and slack client
     app.config.db = Database()
-    app.config.signing = os.environ.get("SLACK_SIGNING")
+    app.config.signing = os.environ.get("SLACK_SIGNING", '')
     return app
