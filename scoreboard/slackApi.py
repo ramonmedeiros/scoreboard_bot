@@ -61,3 +61,12 @@ class Slack:
             logging.error(f"Cannot add workspace: {e}")
             return False
         return response
+
+    def send_msg(self, text, channel):
+        try:
+            self.client.chat_postMessage(channel=channel, text=text)
+            logging.info(f"Sent message to channel {channel}")
+        except Exception as e:
+            logging.error(f"Error while sending message {text} to channel {channel}")
+            return False
+        return True

@@ -66,15 +66,15 @@ def post_result():
 
     # user not present: send message
     if teamB is None:
-        return f"User {user} is not on the channel"
+        return f"User {user} is not on the channel", 400
 
     # error while saving: report
     if current_app.config.db.addGame(channel, teamA, int(myScore), teamB, int(otherScore)) is False:
         return make_response(jsonify(message="Cannot register game"), 500)
 
-    msg = generate_leaderboard(channel, token[0]["token"])
-    logging.info(f"Sending message on channel {channel}")
-    slack.client.chat_postMessage(channel=channel, text=msg)
+    if slack.send_msg(channel=channel, text=generate_leaderboard(channel, token[0]["token"])) is False:
+        return make_response(jsonify(message="Cannot send message"), 500)
+
     return '', 204
 
 
@@ -93,9 +93,9 @@ def get_leaderboard():
         return make_response(jsonify(message="Not authenticated on Slack"), 400)
     slack = Slack(token=token[0]["token"])
 
-    msg = generate_leaderboard(channel, token[0]["token"])
-    logging.info(f"Sending message on channel {channel}")
-    slack.client.chat_postMessage(channel=channel, text=msg)
+    # send message
+    if slack.send_msg(channel=channel, text=generate_leaderboard(channel, token[0]["token"])) is False:
+        return make_response(jsonify(message="Cannot send message"), 500)
 
     return '', 204
 

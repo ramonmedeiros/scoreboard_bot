@@ -25,6 +25,18 @@ def test_app(client):
 def test_install(client):
     assert client.get("/install").status_code == 302
 
+
+@patch('scoreboard.slackApi.Slack.add_to_workspace')
+def test_oauth_token(res, client):
+    # set workspace response
+    res.return_value = {"team": {"id": ""},
+                        "access_token": ""}
+
+    # save token successful
+    client.application.config.db.save_token = MagicMock(return_value=True)
+    req = client.get("/redirect?code=")
+    assert req.status_code == 200
+
 def test_old_timestamp(client):
     timestamp = datetime.now() - timedelta(minutes=6)
     ts = timestamp.timestamp()
@@ -67,6 +79,27 @@ def test_validation(webclient, client):
                       data=params,
                       headers={'X-Slack-Request-Timestamp': ts,
                                'X-Slack-Signature': my_signature})
+
+    assert req.status_code == 204
+
+
+@patch('scoreboard.slackApi.Slack.get_userId_by_username')
+@patch('scoreboard.verify_request')
+@patch('scoreboard.slackApi.WebClient')
+def test_report_result(web, verify, slackApi, client):
+
+    # mock authentication and leaderboard return
+    verify.return_value = True
+    client.application.config.db.get_token = MagicMock(return_value=[{"token": ""}])
+    client.application.config.db.addGame = MagicMock(return_value=True)
+    scoreboard.generate_leaderboard = MagicMock(return_value="")
+
+    # request params
+    req = client.post("/result",
+                      data={"text": "1 1 @user",
+                            "user_name": "@bla",
+                            "channel_id": "AAA",
+                            "team_id": "aa"})
 
     assert req.status_code == 204
 
