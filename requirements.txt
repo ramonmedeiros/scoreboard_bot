@@ -38,7 +38,7 @@ pytest-cov==2.8.1
 pytest-html==2.1.1
 pytest-metadata==1.9.0
 requests==2.23.0
-six==1.14.0
+six==1.15.0
 slackclient==2.5.0
 traitlets==4.3.3
 wcwidth==0.1.9
