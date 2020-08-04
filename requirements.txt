@@ -42,7 +42,7 @@ six==1.15.0
 slackclient==2.7.3
 traitlets==4.3.3
 wcwidth==0.2.5
-urllib3==1.25.9
+urllib3==1.25.10
 Werkzeug==1.0.1
 yarl==1.4.2
 zipp==3.1.0
