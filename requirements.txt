@@ -36,7 +36,7 @@ pyparsing==2.4.7
 pytest==6.0.1
 pytest-cov==2.10.0
 pytest-html==2.1.1
-pytest-metadata==1.9.0
+pytest-metadata==1.10.0
 requests==2.23.0
 six==1.15.0
 slackclient==2.7.3
