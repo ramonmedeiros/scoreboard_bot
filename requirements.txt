@@ -40,7 +40,7 @@ pytest-metadata==1.10.0
 requests==2.24.0
 six==1.15.0
 slackclient==2.8.2
-traitlets==5.0.3
+traitlets==5.0.4
 wcwidth==0.2.5
 urllib3==1.25.10
 Werkzeug==1.0.1
