@@ -33,7 +33,7 @@ ptyprocess==0.6.0
 py==1.9.0
 Pygments==2.7.2
 pyparsing==2.4.7
-pytest==6.1.2
+pytest==6.2.0
 pytest-cov==2.10.1
 pytest-html==3.0.0
 pytest-metadata==1.11.0
