@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: importlib-metadata
+    versions:
+    - 3.10.0
+    - 3.10.1
+    - 3.4.0
+    - 3.6.0
+    - 3.7.0
+    - 3.7.2
+    - 3.7.3
+    - 3.9.0
+    - 4.0.0
+  - dependency-name: urllib3
+    versions:
+    - 1.26.3
+  - dependency-name: pygments
+    versions:
+    - 2.7.4
+    - 2.8.0
+  - dependency-name: pytest
+    versions:
+    - 6.2.2
+  - dependency-name: parso
+    versions:
+    - 0.8.1
